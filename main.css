@@ -1,0 +1,35 @@
+body {
+	background-color: black;
+	color: white;
+	padding: 50px 150px 0px 150px;
+	font-family: Meiryo, Arial, sans-serif;
+}
+
+h1 {
+	text-align: center;
+}
+
+table {
+	border: 1px solid white;
+	padding: 10px 10px 0px 0px;
+	width: auto;
+}
+
+a {
+    color: #00FFFF;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #8A2BE2;
+}
+
+a:hover {
+    color: #1E90FF;
+    text-decoration: underline;
+}
+
+a:active {
+    color: #FFD700;
+    text-decoration: underline;
+}
