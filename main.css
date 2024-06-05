@@ -1,9 +1,19 @@
 body {
 	background-color: black;
 	color: white;
-	padding: 50px 150px 0px 150px;
+	padding: 50px 5% 0px 5%;
 	font-family: Meiryo, Arial, sans-serif;
 }
+
+@media only screen and (min-width: 1081px) {
+	body {
+		padding: 50px 20% 0px 20%;
+	}
+	
+	table {
+		width: auto !important;
+	}
+}	
 
 h1 {
 	text-align: center;
@@ -12,7 +22,7 @@ h1 {
 table {
 	border: 1px solid white;
 	padding: 10px 10px 0px 0px;
-	width: auto;
+	width: 100%;
 }
 
 a {
