@@ -1,39 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-    <head>
+    <head>		
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="theme-color" content="#F2F3F4" media="(prefers-color-scheme:
-            light)">
-        <meta name="theme-color" content="#373D3F" media="(prefers-color-scheme:
-            dark)">
         <meta name="description" content="A web page for counting the number of
-            Japanese characters in subtitle files.">
+            Korean characters in subtitle files.">
         <meta name="twitter:dnt" content="on">
-        <meta property="og:title" content="Subtitle Character Counter">
-        <meta property="og:site_name" content="Subtitle Character Counter">
-        <meta property="og:locale" content="en_US">
+        <meta property="og:title" content="Korean Subtitle Character Counter">
+        <meta property="og:site_name" content="Korean Subtitle Character Counter">
+        <meta property="og:locale" content="en_NZ">
+		<meta name="type" property="og:type" content="website" />
         <meta property="og:url"
-            content="https://cademcniven.com/subtitleCharacterCounter.html">
-        <meta property="og:description" content="A web page for counting the
-            number of
-            Japanese characters in subtitle files.">
+            content="https://peldas.github.io/koreanSubtitleCharacterCounter.html">
+        <meta property="og:description" content="A web page for counting the number of Korean characters in subtitle files.">
         <link rel="canonical"
-            href="https://cademcniven.com/subtitleCharacterCounter.html">
-        <link rel="apple-touch-icon" sizes="180x180"
-            href="/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32"
-            href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16"
-            href="/favicon-16x16.png">
-        <link rel="manifest" href="/site.webmanifest">
-        <title>Subtitle Character Counter</title>
+            href="https://peldas.github.io/koreanSubtitleCharacterCounter.html">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico">
+        <title>Korean Subtitle Character Counter</title>
 
         <style>
             :root {
-                color: rgb(240, 240, 240);
-                background: rgb(23, 27, 29);
+                color: white;
+                background: black;
+				font-family: Meiryo, Arial, sans-serif;
             }
 
             html, body {
@@ -49,9 +39,24 @@
             }
 
             .fileUpload {
-                color: #6199f3;
+                color: #00FFFF;
+				text-decoration: none;
                 cursor: pointer;
             }
+			
+			.fileUpload:visited {
+				color: #8A2BE2;
+			}
+
+			.fileUpload:hover {
+				color: #1E90FF;
+				text-decoration: underline;
+			}
+
+			.fileUpload:active {
+				color: #FFD700;
+				text-decoration: underline;
+			}
 
             #characterCount {
                 margin-top: 30vh;
@@ -61,7 +66,7 @@
             }
         </style>
         <script>
-            const regex = /[一-龠]+|[ぁ-ゔ]+|[ァ-ヴー]+|[ａ-ｚＡ-Ｚ０-９]+|[々〆〤ヶ]+/g
+            const regex = /[ㄱ-힝]+/gimu
 
             function countCharacters(files){
                 const characterCount = document.getElementById('characterCount')
@@ -73,6 +78,8 @@
                     reader.onload = function(event) {      
 
                         subtitleText += removeParentheticals(event.target.result, file);
+						
+						console.log([...subtitleText.matchAll(regex)].join(''))
 
                         characterCount.innerText = [...subtitleText.matchAll(regex)].join('').length + ' characters'
                     }
@@ -151,7 +158,7 @@
         </script>
     </head>
     <body ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-        <h1>Subtitle Character Counter</h1>
+        <h1>Korean Subtitle Character Counter</h1>
         <h2>Drag and drop 1 or more subtitle file(s) (.srt, .ass, .vtt, or
             whatever messed up format you have) onto the page, or click
             <label class="fileUpload"><input type="file"
