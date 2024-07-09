@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#F2F3F4" media="(prefers-color-scheme:
+            light)">
+        <meta name="theme-color" content="#373D3F" media="(prefers-color-scheme:
+            dark)">
+        <meta name="description" content="A web page for counting the number of
+            Japanese characters in subtitle files.">
+        <meta name="twitter:dnt" content="on">
+        <meta property="og:title" content="Subtitle Character Counter">
+        <meta property="og:site_name" content="Subtitle Character Counter">
+        <meta property="og:locale" content="en_US">
+        <meta property="og:url"
+            content="https://cademcniven.com/subtitleCharacterCounter.html">
+        <meta property="og:description" content="A web page for counting the
+            number of
+            Japanese characters in subtitle files.">
+        <link rel="canonical"
+            href="https://cademcniven.com/subtitleCharacterCounter.html">
+        <link rel="apple-touch-icon" sizes="180x180"
+            href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32"
+            href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16"
+            href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+        <title>Subtitle Character Counter</title>
+
+        <style>
+            :root {
+                color: rgb(240, 240, 240);
+                background: rgb(23, 27, 29);
+            }
+
+            html, body {
+                height: 100%;
+            }
+
+            h1, h2, p {
+                text-align: center;
+            }
+
+            input[type="file"] {
+                display: none;
+            }
+
+            .fileUpload {
+                color: #6199f3;
+                cursor: pointer;
+            }
+
+            #characterCount {
+                margin-top: 30vh;
+                font-size: 5rem;
+                font-weight: bold;
+                text-decoration: underline;
+            }
+        </style>
+        <script>
+            const regex = /[一-龠]+|[ぁ-ゔ]+|[ァ-ヴー]+|[ａ-ｚＡ-Ｚ０-９]+|[々〆〤ヶ]+/g
+
+            function countCharacters(files){
+                const characterCount = document.getElementById('characterCount')
+                let subtitleText = ""
+                let i = 0
+                for (const file of files){
+                    const reader = new FileReader();
+                    i+=1
+                    reader.onload = function(event) {      
+
+                        subtitleText += removeParentheticals(event.target.result, file);
+
+                        characterCount.innerText = [...subtitleText.matchAll(regex)].join('').length + ' characters'
+                    }
+
+                    reader.readAsText(file)
+                }
+            }
+
+            function removeParentheticals(file_contents, file_metadata) {
+                /**
+                 * Removes parentheses and the stuff inside of them line-by-line.
+                 * Do this line by line because sometimes there are typos were parentheses do not terminate,
+                 * or a small parenthesis is closed with a big parenthesis (or vice-versa).
+                 * If there is a mismatch on a line, we just don't delete that parenthetical.
+                 * 
+                 * Note: .* pattern matches one or more character except for line-break characters (like \n).
+                 * Since this is line-by-line it doesn't matter, but worth mentioning in case a different method
+                 * is used in the future.
+                 */
+
+                // https://stackoverflow.com/questions/21895233/how-to-split-string-with-newline-n-in-node
+                // Windows + Unix newline
+                split = file_contents.split(/\r?\n/);
+
+                for (let i = 0; i < split.length; i++){
+
+                    let line = split[i]
+
+                    let lp_big = line.match(/（/g)
+                    let rp_big = line.match(/）/g)
+                    
+                    //remove text within parenthesis,
+                    //but only if there's an even number of parenthesis
+                    if (lp_big && rp_big && lp_big.length == rp_big.length)
+                        line = line.replace(/（.*）/g, "")
+
+                    let lp_standard = line.match(/\(/g)
+                    let rp_standard = line.match(/\)/g)
+
+                    if (lp_standard && rp_standard && lp_standard.length == rp_standard.length)
+                        line = line.replace(/\(.*\)/g, "")
+
+                    if ((!lp_big != !rp_big) || (!lp_standard != !rp_standard)) {
+                        console.log(file_metadata);
+                        console.log(`Mismatched parentheses found on line: ${i}`);
+                    }
+
+                    split[i] = line;
+                }
+                
+                return split.join('\n');
+            }
+
+            function handleFileUpload(event) {
+                let files = event.target.files
+                files = [...files]
+
+                countCharacters(files)
+            }
+
+            function dropHandler(ev) {
+                // Prevent file from being opened
+                ev.preventDefault()
+                ev.stopPropagation()
+
+                let files = ev.dataTransfer.files
+                files = [...files]
+                
+                countCharacters(files)
+            }
+
+            function dragOverHandler(ev) {
+                ev.preventDefault()
+                ev.stopPropagation()
+            }
+        </script>
+    </head>
+    <body ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <h1>Subtitle Character Counter</h1>
+        <h2>Drag and drop 1 or more subtitle file(s) (.srt, .ass, .vtt, or
+            whatever messed up format you have) onto the page, or click
+            <label class="fileUpload"><input type="file"
+                    onchange="handleFileUpload(event)" multiple>here</label></h2>
+        <p id="characterCount"></p>
+    </body>
+</html>
